@@ -1,7 +1,7 @@
-name = "FigShell"
+name = "EasyPlots"
 uuid = "b24590b7-9ef5-4d6a-b58c-633f9bec86a3"
 version = "0.1.0"
-authors = ["you"]
+authors = ["Murphy Braswell"]
 
 [deps]
 Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
