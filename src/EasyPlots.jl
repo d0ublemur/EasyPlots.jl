@@ -346,6 +346,7 @@ function Base.display(::GtkFigureDisplay, p::Plots.Plot)
 end
 
 function __init__()
+    haskey(ENV, "GKSwstype") || (ENV["GKSwstype"] = "nul")
     pushdisplay(DISPLAY)
     return nothing
 end
