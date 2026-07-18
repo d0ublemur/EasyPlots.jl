@@ -319,6 +319,7 @@ function closeall()
     while !isempty(SHELL.tabs)
         close_tab!(length(SHELL.tabs))
     end
+    SHELL.counter = 0
     return nothing
 end
 
