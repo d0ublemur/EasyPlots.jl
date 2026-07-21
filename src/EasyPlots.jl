@@ -133,9 +133,9 @@ end
 
 """
 Map a canvas pixel (px,py) to data coordinates of the plot in tab `t`.
-Uses Plots' plotarea bounding box (reported in mm; Plots renders at
-p.attr[:dpi], default 100 px/inch). Falls back to whole-canvas proportional
-mapping if the bbox probing fails.
+Maps onto the plot area (inner axes box) as a fraction of the whole figure,
+so it is independent of dpi/display scaling. Falls back to whole-canvas
+proportional mapping if the bbox probing fails.
 """
 function px_to_data(t::FigTab, px::Real, py::Real)
     p  = t.plot
@@ -145,13 +145,13 @@ function px_to_data(t::FigTab, px::Real, py::Real)
     left = 0.0; top = 0.0; aw = float(w); ah = float(h)
     try
         sp  = p.subplots[end] # TODO: Handle more than 1 subplot
-        bb  = Plots.plotarea(sp)
-        dpi = get(p.attr, :dpi, 100)
-        mm2px(x) = Float64(x.value) / 25.4 * dpi    # CALIBRATE (Measures internals)
-        left = mm2px(Plots.left(bb))
-        top  = mm2px(Plots.top(bb))
-        aw   = mm2px(Plots.width(bb))
-        ah   = mm2px(Plots.height(bb))
+        area = Plots.plotarea(sp)   # inner axes box (mm)
+        fig  = Plots.bbox(p.layout) # whole figure box (mm)
+        frac(a, b) = Float64(a.value) / Float64(b.value)
+        left = frac(Plots.left(area),   Plots.width(fig))  * w
+        top  = frac(Plots.top(area),    Plots.height(fig)) * h
+        aw   = frac(Plots.width(area),  Plots.width(fig))  * w
+        ah   = frac(Plots.height(area), Plots.height(fig)) * h
     catch
         # fall back to proportional mapping over the whole canvas
     end
