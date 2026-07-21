@@ -152,6 +152,9 @@ function px_to_data(t::FigTab, px::Real, py::Real)
         top  = frac(Plots.top(area),    Plots.height(fig)) * h
         aw   = frac(Plots.width(area),  Plots.width(fig))  * w
         ah   = frac(Plots.height(area), Plots.height(fig)) * h
+        # GR shrinks the data viewport's right edge for the colorbar after
+        # plotarea is computed (gr.jl: xmax -= 0.1, in NDC of the larger dim).
+        Plots.hascolorbar(sp) && (aw -= 0.1 * max(w, h))
     catch err
         @warn "px_to_data: plot-area probe failed, using whole canvas" err
     end
@@ -159,7 +162,7 @@ function px_to_data(t::FigTab, px::Real, py::Real)
     fy = clamp((py - top)  / ah, 0.0, 1.0)
     dx = xl[1] + fx * (xl[2] - xl[1])
     dy = yl[2] - fy * (yl[2] - yl[1])   # y axis is inverted in pixel space
-    @info "px_to_data" px py w h left top aw ah fx fy
+    @info "px_to_data" px py w h left top aw ah fx fy dx dy
     return dx, dy
 end
 
